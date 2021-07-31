@@ -1,12 +1,21 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import "./App.css";
 
-const defaultBoxSize = 200;
-
 const App: React.FC = () => {
   const boxElementRef = useRef<HTMLDivElement | null>(null);
+  
+  const [defaultBoxSize, setDefaultBoxSize] = useState<number>(0);
   const [boxSize, setBoxSize] = useState<number>(defaultBoxSize);
+
+  useEffect(() => {
+    if (!boxElementRef.current) return;
+
+    const elementSize = boxElementRef.current.clientWidth;
+
+    setDefaultBoxSize(elementSize);
+    setBoxSize(elementSize);
+  }, [boxElementRef]);
 
   const handleScaleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +30,7 @@ const App: React.FC = () => {
 
       setBoxSize(nextSize);
     },
-    []
+    [defaultBoxSize]
   );
 
   return (
