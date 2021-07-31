@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useCallback, useRef, useState } from "react";
 
-function App() {
+import "./App.css";
+
+const defaultBoxSize = 200;
+
+const App: React.FC = () => {
+  const boxElementRef = useRef<HTMLDivElement | null>(null);
+  const [boxSize, setBoxSize] = useState<number>(defaultBoxSize);
+
+  const handleScaleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const scale = Number(event.target.value);
+
+      const nextSize = defaultBoxSize * scale;
+
+      if (!boxElementRef.current) return;
+
+      boxElementRef.current.style.width = `${nextSize}px`;
+      boxElementRef.current.style.height = `${nextSize}px`;
+
+      setBoxSize(nextSize);
+    },
+    []
+  );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="scale-container">
+        <strong>Escala</strong>
+
+        <input
+          type="range"
+          min="0"
+          max="2"
+          step="0.1"
+          defaultValue="1"
+          onChange={handleScaleChange}
+        />
+      </div>
+
+      <main>
+        <div ref={boxElementRef} className="box">
+          {boxSize >= defaultBoxSize ? (
+            <strong>😎</strong>
+          ) : (
+            <strong>🥺</strong>
+          )}
+        </div>
+      </main>
     </div>
   );
-}
+};
 
-export default App;
+export { App };
